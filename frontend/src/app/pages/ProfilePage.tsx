@@ -20,7 +20,7 @@ export default function ProfilePage({ books }: ProfilePageProps) {
       <div className="bg-card border border-border rounded-2xl p-6">
         <div className="flex flex-col sm:flex-row gap-6 items-start">
           <div className="relative">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-violet-500 flex items-center justify-center text-white">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-[var(--chart-5)] flex items-center justify-center text-primary-foreground">
               <User className="w-10 h-10" />
             </div>
             <button className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-background border border-border flex items-center justify-center shadow-sm">
