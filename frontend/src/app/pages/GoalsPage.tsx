@@ -60,8 +60,11 @@ export default function GoalsPage({ books }: GoalsPageProps) {
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">July Goal</p>
               <p className="text-3xl font-bold text-foreground mt-1">{monthlyRead} <span className="text-muted-foreground text-lg font-medium">/ {monthlyGoal}</span></p>
             </div>
-            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-emerald-500" />
+            <div
+              className="w-12 h-12 rounded-xl flex items-center justify-center"
+              style={{ background: "color-mix(in srgb, var(--chart-4) 15%, transparent)" }}
+            >
+              <Calendar className="w-6 h-6" style={{ color: "var(--chart-4)" }} />
             </div>
           </div>
           <ProgressBar value={Math.round(monthlyRead / monthlyGoal * 100)} color="emerald" />
@@ -77,7 +80,7 @@ export default function GoalsPage({ books }: GoalsPageProps) {
             <XAxis dataKey="month" tick={{ fontSize: 12 }} />
             <YAxis tick={{ fontSize: 12 }} />
             <Tooltip contentStyle={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: "12px", fontSize: "12px" }} />
-            <Bar dataKey="books" fill="#4F46E5" radius={[6, 6, 0, 0]} name="Books Read" />
+            <Bar dataKey="books" fill="var(--primary)" radius={[6, 6, 0, 0]} name="Books Read" />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -87,15 +90,29 @@ export default function GoalsPage({ books }: GoalsPageProps) {
         <div className="space-y-3">
           {milestones.map((m, i) => (
             <div key={i} className="flex items-center gap-4">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors
-                ${m.completed ? "bg-emerald-500 text-white" : "bg-muted border-2 border-border text-muted-foreground"}`}>
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${
+                  m.completed ? "" : "bg-muted border-2 border-border text-muted-foreground"
+                }`}
+                style={m.completed ? { background: "var(--chart-4)", color: "var(--primary-foreground)" } : undefined}
+              >
                 {m.completed ? <Check className="w-4 h-4" /> : <span className="text-xs font-bold">{m.target}</span>}
               </div>
               <div className="flex-1">
                 <p className={`text-sm font-medium ${m.completed ? "text-foreground" : "text-muted-foreground"}`}>{m.label}</p>
                 <p className="text-xs text-muted-foreground">{m.target} books</p>
               </div>
-              {m.completed && <span className="text-xs bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 px-2 py-1 rounded-full font-medium">Achieved!</span>}
+              {m.completed && (
+                <span
+                  className="text-xs px-2 py-1 rounded-full font-medium"
+                  style={{
+                    background: "color-mix(in srgb, var(--chart-4) 15%, transparent)",
+                    color: "var(--chart-4)",
+                  }}
+                >
+                  Achieved!
+                </span>
+              )}
             </div>
           ))}
         </div>

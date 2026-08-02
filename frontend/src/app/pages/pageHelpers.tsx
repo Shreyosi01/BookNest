@@ -58,12 +58,17 @@ export function StarRating({ rating, onRate, size = "sm" }: { rating: number; on
 }
 
 export function ProgressBar({ value, color = "primary" }: { value: number; color?: "primary" | "emerald" | "amber" }) {
-  const colorMap = { primary: "bg-primary", emerald: "bg-emerald-500", amber: "bg-amber-500" };
+  // Theme CSS variables, not static Tailwind colors, so this stays correct in both light and dark mode.
+  const colorMap: Record<string, string> = {
+    primary: "var(--primary)",
+    emerald: "var(--chart-4)",
+    amber: "var(--accent)",
+  };
   return (
     <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
       <div
-        className={`h-full rounded-full transition-all duration-500 ${colorMap[color]}`}
-        style={{ width: `${Math.max(0, Math.min(100, value))}%` }}
+        className="h-full rounded-full transition-all duration-500"
+        style={{ width: `${Math.max(0, Math.min(100, value))}%`, background: colorMap[color] }}
       />
     </div>
   );
@@ -99,7 +104,7 @@ export function Select({
   label, value, onChange, options, required = false,
 }: {
   label?: string; value: string; onChange: (v: string) => void;
-  options:  readonly string[]; required?: boolean;
+  options: readonly string[]; required?: boolean;
 }) {
   return (
     <div className="space-y-1.5">
