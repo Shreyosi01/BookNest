@@ -9,6 +9,12 @@ interface NavbarProps {
   onSearch: (q: string) => void;
 }
 
+const NOTIFICATIONS = [
+  { msg: "You've read 3 books this month!", time: "2h ago", color: "var(--chart-4)" },
+  { msg: "Reading streak: 7 days! Keep it up.", time: "1d ago", color: "var(--accent)" },
+  { msg: "Monthly goal: 75% complete.", time: "3d ago", color: "var(--primary)" },
+];
+
 export function Navbar({ isDark, onToggleDark, onMobileMenuOpen, searchQuery, onSearch }: NavbarProps) {
   const [showNotifs, setShowNotifs] = useState(false);
   return (
@@ -40,13 +46,12 @@ export function Navbar({ isDark, onToggleDark, onMobileMenuOpen, searchQuery, on
               <div className="px-4 py-3 border-b border-border">
                 <p className="text-sm font-semibold text-foreground">Notifications</p>
               </div>
-              {[
-                { msg: "You've read 3 books this month!", time: "2h ago", color: "bg-emerald-500" },
-                { msg: "Reading streak: 7 days! Keep it up.", time: "1d ago", color: "bg-amber-500" },
-                { msg: "Monthly goal: 75% complete.", time: "3d ago", color: "bg-primary" },
-              ].map((n, i) => (
+              {NOTIFICATIONS.map((n, i) => (
                 <div key={i} className="px-4 py-3 flex items-start gap-3 hover:bg-muted transition-colors cursor-pointer">
-                  <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${n.color}`} />
+                  <div
+                    className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0"
+                    style={{ background: n.color }}
+                  />
                   <div>
                     <p className="text-xs text-foreground">{n.msg}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">{n.time}</p>
@@ -69,7 +74,9 @@ export function Navbar({ isDark, onToggleDark, onMobileMenuOpen, searchQuery, on
             <p className="text-xs font-medium text-foreground">Alex Rivera</p>
             <p className="text-xs text-muted-foreground">avid reader</p>
           </div>
-          <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white text-sm font-bold">AR</div>
+          <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-primary-foreground text-sm font-bold">
+            AR
+          </div>
         </div>
       </div>
     </header>

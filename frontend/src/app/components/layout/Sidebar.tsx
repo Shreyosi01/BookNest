@@ -39,7 +39,7 @@ export function Sidebar({ currentPage, onNavigate, isMobileOpen, onMobileClose, 
         <div className="p-6 border-b border-sidebar-border">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-sm">
-              <BookOpen className="w-5 h-5 text-white" />
+              <BookOpen className="w-5 h-5 text-primary-foreground" />
             </div>
             <div>
               <span className="font-bold text-base text-sidebar-foreground">BookNest</span>
@@ -66,7 +66,13 @@ export function Sidebar({ currentPage, onNavigate, isMobileOpen, onMobileClose, 
                 <item.icon className="w-4 h-4 flex-shrink-0" />
                 <span className="flex-1 text-left">{item.label}</span>
                 {item.comingSoon && (
-                  <span className="text-[9px] bg-amber-500/20 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded-full font-bold tracking-wide">
+                  <span
+                    className="text-[9px] px-1.5 py-0.5 rounded-full font-bold tracking-wide"
+                    style={{
+                      background: "color-mix(in srgb, var(--accent) 22%, transparent)",
+                      color: "var(--accent)",
+                    }}
+                  >
                     SOON
                   </span>
                 )}
