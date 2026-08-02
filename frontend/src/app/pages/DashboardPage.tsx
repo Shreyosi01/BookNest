@@ -64,9 +64,15 @@ export default function DashboardPage({
           </p>
         </div>
 
-        <div className="flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 dark:border-amber-800 dark:bg-amber-950/30">
-          <Flame className="h-4 w-4 text-amber-500" />
-          <span className="text-sm font-semibold text-amber-700 dark:text-amber-400">
+        <div
+          className="flex items-center gap-2 rounded-xl border px-3 py-2"
+          style={{
+            borderColor: "color-mix(in srgb, var(--accent) 40%, transparent)",
+            background: "color-mix(in srgb, var(--accent) 15%, transparent)",
+          }}
+        >
+          <Flame className="h-4 w-4" style={{ color: "var(--accent)" }} />
+          <span className="text-sm font-semibold" style={{ color: "var(--accent)" }}>
             {streak} day streak
           </span>
         </div>
@@ -78,7 +84,7 @@ export default function DashboardPage({
           value={total}
           sub="in your library"
           icon={Library}
-          color="bg-primary"
+          color="var(--chart-1)"
         />
 
         <StatCard
@@ -86,7 +92,7 @@ export default function DashboardPage({
           value={completed}
           sub="all time"
           icon={Check}
-          color="bg-emerald-500"
+          color="var(--chart-4)"
         />
 
         <StatCard
@@ -94,7 +100,8 @@ export default function DashboardPage({
           value={reading}
           sub="in progress"
           icon={BookOpen}
-          color="bg-blue-500"
+          color="var(--chart-2)"
+          iconColor="var(--accent-foreground)"
         />
 
         <StatCard
@@ -102,7 +109,7 @@ export default function DashboardPage({
           value={wishlist}
           sub="books to read"
           icon={Bookmark}
-          color="bg-purple-500"
+          color="var(--chart-5)"
         />
       </div>
 
@@ -119,29 +126,30 @@ export default function DashboardPage({
             <AreaChart data={MONTHLY_STATS}>
               <defs>
                 <linearGradient id="colorBooks" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.15} />
-                  <stop offset="95%" stopColor="#4F46E5" stopOpacity={0} />
+                  <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
                 </linearGradient>
               </defs>
 
-              <CartesianGrid strokeDasharray="3 3" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
 
-              <XAxis dataKey="month" />
+              <XAxis dataKey="month" stroke="var(--muted-foreground)" />
 
-              <YAxis />
+              <YAxis stroke="var(--muted-foreground)" />
 
               <Tooltip
                 contentStyle={{
                   background: "var(--card)",
                   border: "1px solid var(--border)",
                   borderRadius: "12px",
+                  color: "var(--foreground)",
                 }}
               />
 
               <Area
                 type="monotone"
                 dataKey="books"
-                stroke="#4F46E5"
+                stroke="var(--primary)"
                 fill="url(#colorBooks)"
                 strokeWidth={2}
               />
@@ -166,7 +174,14 @@ export default function DashboardPage({
                 ))}
               </Pie>
 
-              <Tooltip />
+              <Tooltip
+                contentStyle={{
+                  background: "var(--card)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "12px",
+                  color: "var(--foreground)",
+                }}
+              />
             </PieChart>
           </ResponsiveContainer>
 
@@ -252,7 +267,7 @@ export default function DashboardPage({
                   cy="60"
                   r="50"
                   fill="none"
-                  stroke="currentColor"
+                  stroke="var(--border)"
                   strokeWidth="8"
                 />
 
@@ -261,7 +276,7 @@ export default function DashboardPage({
                   cy="60"
                   r="50"
                   fill="none"
-                  stroke="#4F46E5"
+                  stroke="var(--primary)"
                   strokeWidth="8"
                   strokeLinecap="round"
                   strokeDasharray={2 * Math.PI * 50}
@@ -272,11 +287,11 @@ export default function DashboardPage({
               </svg>
 
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-2xl font-bold">
+                <span className="text-2xl font-bold text-foreground">
                   {monthlyRead}
                 </span>
 
-                <span className="text-xs">
+                <span className="text-xs text-muted-foreground">
                   of {monthlyGoal}
                 </span>
               </div>
@@ -329,10 +344,10 @@ const MONTHLY_STATS = [
 ];
 
 const GENRE_DATA = [
-  { name: "Fiction", value: 6, color: "#4F46E5" },
-  { name: "Technology", value: 3, color: "#10B981" },
-  { name: "Self-Help", value: 2, color: "#F59E0B" },
-  { name: "Non-Fiction", value: 1, color: "#8B5CF6" },
-  { name: "Psychology", value: 1, color: "#EF4444" },
-  { name: "Other", value: 2, color: "#EC4899" },
+  { name: "Fiction", value: 6, color: "var(--chart-1)" },
+  { name: "Technology", value: 3, color: "var(--chart-4)" },
+  { name: "Self-Help", value: 2, color: "var(--chart-2)" },
+  { name: "Non-Fiction", value: 1, color: "var(--chart-5)" },
+  { name: "Psychology", value: 1, color: "var(--chart-3)" },
+  { name: "Other", value: 2, color: "var(--muted-foreground)" },
 ];
