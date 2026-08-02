@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { BookOpen, Library, Bookmark, Target, BarChart3, ArrowRight, Star, Check, Quote, Sun, Moon } from "lucide-react";
+=======
+import { BookOpen, Library, Bookmark, Target, BarChart3, ArrowRight, Star, Check, Quote } from "lucide-react";
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
 
 /**
  * BookNest landing page.
@@ -11,7 +15,11 @@ import { BookOpen, Library, Bookmark, Target, BarChart3, ArrowRight, Star, Check
  * <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
  */
 
+<<<<<<< HEAD
 const LIGHT_TOKENS = {
+=======
+const TOKENS = {
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
   "--ink": "#22272B",
   "--ink2": "#191D20",
   "--parchment": "#EFE7D8",
@@ -21,6 +29,7 @@ const LIGHT_TOKENS = {
   "--wine": "#9C4A3E",
   "--sage": "#3B4A6B",
   "--textInk": "#23201B",
+<<<<<<< HEAD
   "--borderSoft": "rgba(35,32,27,0.15)",
   "--borderMed": "rgba(35,32,27,0.2)",
   "--borderStrong": "rgba(35,32,27,0.3)",
@@ -48,6 +57,8 @@ const DARK_TOKENS = {
   "--onInk": "#EFE7D8",
   "--onInkDivider": "rgba(239,231,216,0.15)",
   "--headerBg": "rgba(14,16,18,0.92)",
+=======
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
   "--fontDisplay": "'Fraunces', Georgia, 'Times New Roman', serif",
   "--fontBody": "'Source Serif 4', Georgia, serif",
   "--fontMono": "'IBM Plex Mono', 'Courier New', monospace",
@@ -56,8 +67,11 @@ const DARK_TOKENS = {
 interface LandingPageProps {
   onGetStarted: () => void;
   onSignIn: () => void;
+<<<<<<< HEAD
   isDark: boolean;
   onToggleDark: () => void;
+=======
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
 }
 
 function CallTag({ children }: { children: React.ReactNode }) {
@@ -104,18 +118,32 @@ function LibraryCard() {
       {/* stacked cards behind for depth */}
       <div
         className="absolute -top-3 -right-3 w-full h-full rounded-sm rotate-[4deg]"
+<<<<<<< HEAD
         style={{ background: "var(--parchment2)", border: "1px solid var(--borderSoft)" }}
       />
       <div
         className="absolute -top-1.5 -right-1.5 w-full h-full rounded-sm rotate-[2deg]"
         style={{ background: "var(--parchment)", border: "1px solid var(--borderSoft)" }}
+=======
+        style={{ background: "var(--parchment2)", border: "1px solid rgba(43,33,24,0.15)" }}
+      />
+      <div
+        className="absolute -top-1.5 -right-1.5 w-full h-full rounded-sm rotate-[2deg]"
+        style={{ background: "var(--parchment)", border: "1px solid rgba(43,33,24,0.15)" }}
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
       />
 
       <div
         className="relative w-full rounded-sm p-6 shadow-xl animate-[cardIn_0.6s_ease-out]"
+<<<<<<< HEAD
         style={{ background: "var(--parchment)", border: "1px solid var(--borderMed)" }}
       >
         <div className="flex items-start justify-between pb-4 mb-4" style={{ borderBottom: "1px dashed var(--borderStrong)" }}>
+=======
+        style={{ background: "var(--parchment)", border: "1px solid rgba(43,33,24,0.2)" }}
+      >
+        <div className="flex items-start justify-between pb-4 mb-4" style={{ borderBottom: "1px dashed rgba(43,33,24,0.3)" }}>
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
           <div>
             <p style={{ fontFamily: "var(--fontMono)", fontSize: "10px", letterSpacing: "0.2em", color: "var(--wine)" }}>
               BOOKNEST · READING LOG
@@ -156,7 +184,11 @@ function LibraryCard() {
           ))}
         </div>
 
+<<<<<<< HEAD
         <div className="mt-5 pt-4 flex items-center gap-2" style={{ borderTop: "1px dashed var(--borderStrong)" }}>
+=======
+        <div className="mt-5 pt-4 flex items-center gap-2" style={{ borderTop: "1px dashed rgba(43,33,24,0.3)" }}>
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
           <Quote className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "var(--sage)" }} />
           <p className="text-xs italic" style={{ fontFamily: "var(--fontBody)", color: "var(--textInk)", opacity: 0.75 }}>
             "Between life and death there is a library."
@@ -177,9 +209,13 @@ function LibraryCard() {
   );
 }
 
+<<<<<<< HEAD
 export default function LandingPage({ onGetStarted, onSignIn, isDark, onToggleDark }: LandingPageProps) {
   const TOKENS = isDark ? DARK_TOKENS : LIGHT_TOKENS;
 
+=======
+export default function LandingPage({ onGetStarted, onSignIn }: LandingPageProps) {
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
   const features = [
     {
       tag: "000 · CATALOG",
@@ -214,28 +250,46 @@ export default function LandingPage({ onGetStarted, onSignIn, isDark, onToggleDa
   ];
 
   return (
+<<<<<<< HEAD
     <div style={TOKENS} className="min-h-screen">
       {/* ── Nav ─────────────────────────────────────────────── */}
       <header className="sticky top-0 z-40 backdrop-blur-md" style={{ background: "var(--headerBg)" }}>
+=======
+    <div style={TOKENS} className="min-h-screen" >
+      {/* ── Nav ─────────────────────────────────────────────── */}
+      <header className="sticky top-0 z-40 backdrop-blur-md" style={{ background: "rgba(30,42,34,0.92)" }}>
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-sm flex items-center justify-center" style={{ background: "var(--brass)" }}>
               <BookOpen className="w-4 h-4" style={{ color: "var(--ink)" }} />
             </div>
+<<<<<<< HEAD
             <span className="font-semibold text-base" style={{ fontFamily: "var(--fontDisplay)", color: "var(--onInk)" }}>
+=======
+            <span className="font-semibold text-base" style={{ fontFamily: "var(--fontDisplay)", color: "var(--parchment)" }}>
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
               BookNest
             </span>
           </div>
 
           <nav className="hidden md:flex items-center gap-8 text-sm">
+<<<<<<< HEAD
             <a href="#shelves" className="transition-colors hover:opacity-100" style={{ color: "var(--onInk)", opacity: 0.7, fontFamily: "var(--fontBody)" }}>
               Shelves
             </a>
             <a href="#routine" className="transition-colors hover:opacity-100" style={{ color: "var(--onInk)", opacity: 0.7, fontFamily: "var(--fontBody)" }}>
+=======
+            <a href="#shelves" className="transition-colors hover:opacity-100" style={{ color: "var(--parchment)", opacity: 0.7, fontFamily: "var(--fontBody)" }}>
+              Shelves
+            </a>
+            <a href="#routine" className="transition-colors hover:opacity-100" style={{ color: "var(--parchment)", opacity: 0.7, fontFamily: "var(--fontBody)" }}>
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
               How it works
             </a>
           </nav>
 
+<<<<<<< HEAD
           <div className="flex items-center gap-2">
             <button
               onClick={onToggleDark}
@@ -249,6 +303,13 @@ export default function LandingPage({ onGetStarted, onSignIn, isDark, onToggleDa
               onClick={onSignIn}
               className="text-sm px-3 py-1.5 transition-opacity hover:opacity-80"
               style={{ color: "var(--onInk)", fontFamily: "var(--fontBody)" }}
+=======
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onSignIn}
+              className="text-sm px-3 py-1.5 transition-opacity hover:opacity-80"
+              style={{ color: "var(--parchment)", fontFamily: "var(--fontBody)" }}
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
             >
               Sign in
             </button>
@@ -270,13 +331,21 @@ export default function LandingPage({ onGetStarted, onSignIn, isDark, onToggleDa
             <Eyebrow light>Personal library, kept properly</Eyebrow>
             <h1
               className="text-4xl sm:text-5xl leading-[1.08] font-medium"
+<<<<<<< HEAD
               style={{ fontFamily: "var(--fontDisplay)", color: "var(--onInk)" }}
+=======
+              style={{ fontFamily: "var(--fontDisplay)", color: "var(--parchment)" }}
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
             >
               Every book you've read, lent, loved, or left on page twelve.
             </h1>
             <p
               className="mt-6 text-lg leading-relaxed max-w-md"
+<<<<<<< HEAD
               style={{ fontFamily: "var(--fontBody)", color: "var(--onInk)", opacity: 0.75 }}
+=======
+              style={{ fontFamily: "var(--fontBody)", color: "var(--parchment)", opacity: 0.75 }}
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
             >
               BookNest is where your library actually lives — what you're reading, what you rated, what you underlined, and what's still waiting on the shelf.
             </p>
@@ -293,7 +362,11 @@ export default function LandingPage({ onGetStarted, onSignIn, isDark, onToggleDa
               <a
                 href="#routine"
                 className="text-sm px-2 py-3 border-b transition-opacity hover:opacity-70"
+<<<<<<< HEAD
                 style={{ color: "var(--onInk)", borderColor: "var(--brass)", fontFamily: "var(--fontBody)" }}
+=======
+                style={{ color: "var(--parchment)", borderColor: "var(--brass)", fontFamily: "var(--fontBody)" }}
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
               >
                 See how it works
               </a>
@@ -301,14 +374,22 @@ export default function LandingPage({ onGetStarted, onSignIn, isDark, onToggleDa
 
             <div
               className="mt-14 flex flex-wrap gap-x-8 gap-y-3 pt-6"
+<<<<<<< HEAD
               style={{ borderTop: "1px solid var(--onInkDivider)" }}
+=======
+              style={{ borderTop: "1px solid rgba(241,230,207,0.15)" }}
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
             >
               {[["2,400+", "books logged"], ["15,000", "readers"], ["4.9", "average rating"]].map(([val, label]) => (
                 <div key={label}>
                   <span style={{ fontFamily: "var(--fontMono)", color: "var(--brassLight)" }} className="text-sm">
                     {val}
                   </span>
+<<<<<<< HEAD
                   <span style={{ fontFamily: "var(--fontMono)", color: "var(--onInk)", opacity: 0.5 }} className="text-sm ml-2">
+=======
+                  <span style={{ fontFamily: "var(--fontMono)", color: "var(--parchment)", opacity: 0.5 }} className="text-sm ml-2">
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
                     {label}
                   </span>
                 </div>
@@ -337,7 +418,11 @@ export default function LandingPage({ onGetStarted, onSignIn, isDark, onToggleDa
               <div
                 key={f.title}
                 className="p-6 rounded-sm transition-transform hover:-translate-y-1"
+<<<<<<< HEAD
                 style={{ background: "var(--parchment2)", border: "1px solid var(--borderSoft)" }}
+=======
+                style={{ background: "var(--parchment2)", border: "1px solid rgba(43,33,24,0.12)" }}
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
               >
                 <div className="flex items-center justify-between mb-5">
                   <div className="w-10 h-10 rounded-sm flex items-center justify-center" style={{ background: "var(--ink)" }}>
@@ -362,13 +447,21 @@ export default function LandingPage({ onGetStarted, onSignIn, isDark, onToggleDa
         <div className="max-w-6xl mx-auto px-6">
           <div className="max-w-xl mb-14">
             <Eyebrow light>The routine</Eyebrow>
+<<<<<<< HEAD
             <h2 className="text-3xl sm:text-4xl font-medium" style={{ fontFamily: "var(--fontDisplay)", color: "var(--onInk)" }}>
+=======
+            <h2 className="text-3xl sm:text-4xl font-medium" style={{ fontFamily: "var(--fontDisplay)", color: "var(--parchment)" }}>
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
               Three habits, one shelf
             </h2>
           </div>
 
           <div className="grid sm:grid-cols-3 gap-8">
+<<<<<<< HEAD
             {steps.map((s) => (
+=======
+            {steps.map((s, i) => (
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
               <div key={s.n} className="relative pl-0">
                 <div className="flex items-center gap-3 mb-4">
                   <span
@@ -377,12 +470,21 @@ export default function LandingPage({ onGetStarted, onSignIn, isDark, onToggleDa
                   >
                     {s.n}
                   </span>
+<<<<<<< HEAD
                   <div className="flex-1 h-px" style={{ background: "var(--onInkDivider)" }} />
                 </div>
                 <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: "var(--fontDisplay)", color: "var(--onInk)" }}>
                   {s.title}
                 </h3>
                 <p className="text-sm leading-relaxed" style={{ fontFamily: "var(--fontBody)", color: "var(--onInk)", opacity: 0.65 }}>
+=======
+                  <div className="flex-1 h-px" style={{ background: "rgba(241,230,207,0.15)" }} />
+                </div>
+                <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: "var(--fontDisplay)", color: "var(--parchment)" }}>
+                  {s.title}
+                </h3>
+                <p className="text-sm leading-relaxed" style={{ fontFamily: "var(--fontBody)", color: "var(--parchment)", opacity: 0.65 }}>
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
                   {s.body}
                 </p>
               </div>
@@ -396,7 +498,11 @@ export default function LandingPage({ onGetStarted, onSignIn, isDark, onToggleDa
         <div className="max-w-3xl mx-auto px-6 text-center">
           <div
             className="relative inline-block px-10 py-10 rounded-sm"
+<<<<<<< HEAD
             style={{ background: "var(--parchment2)", border: "1px solid var(--borderSoft)" }}
+=======
+            style={{ background: "var(--parchment2)", border: "1px solid rgba(43,33,24,0.12)" }}
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
           >
             <div
               className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-6 rounded-sm rotate-[-2deg]"
@@ -419,10 +525,17 @@ export default function LandingPage({ onGetStarted, onSignIn, isDark, onToggleDa
       {/* ── CTA ─────────────────────────────────────────────── */}
       <section className="py-24" style={{ background: "linear-gradient(180deg, var(--ink) 0%, var(--ink2) 100%)" }}>
         <div className="max-w-2xl mx-auto px-6 text-center">
+<<<<<<< HEAD
           <h2 className="text-3xl sm:text-4xl font-medium mb-5" style={{ fontFamily: "var(--fontDisplay)", color: "var(--onInk)" }}>
             Your shelf is waiting.
           </h2>
           <p className="text-base mb-9" style={{ fontFamily: "var(--fontBody)", color: "var(--onInk)", opacity: 0.7 }}>
+=======
+          <h2 className="text-3xl sm:text-4xl font-medium mb-5" style={{ fontFamily: "var(--fontDisplay)", color: "var(--parchment)" }}>
+            Your shelf is waiting.
+          </h2>
+          <p className="text-base mb-9" style={{ fontFamily: "var(--fontBody)", color: "var(--parchment)", opacity: 0.7 }}>
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
             Free to start. No credit card, no due dates.
           </p>
           <button
@@ -433,7 +546,11 @@ export default function LandingPage({ onGetStarted, onSignIn, isDark, onToggleDa
             Create your BookNest
             <ArrowRight className="w-4 h-4" />
           </button>
+<<<<<<< HEAD
           <div className="mt-6 flex items-center justify-center gap-1.5 text-xs" style={{ color: "var(--onInk)", opacity: 0.5, fontFamily: "var(--fontMono)" }}>
+=======
+          <div className="mt-6 flex items-center justify-center gap-1.5 text-xs" style={{ color: "var(--parchment)", opacity: 0.5, fontFamily: "var(--fontMono)" }}>
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
             <Check className="w-3.5 h-3.5" />
             Set up in under a minute
           </div>
@@ -445,11 +562,19 @@ export default function LandingPage({ onGetStarted, onSignIn, isDark, onToggleDa
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <BookOpen className="w-4 h-4" style={{ color: "var(--brass)" }} />
+<<<<<<< HEAD
             <span style={{ fontFamily: "var(--fontDisplay)", color: "var(--onInk)" }} className="text-sm font-medium">
               BookNest
             </span>
           </div>
           <p style={{ fontFamily: "var(--fontMono)", color: "var(--onInk)", opacity: 0.4 }} className="text-xs">
+=======
+            <span style={{ fontFamily: "var(--fontDisplay)", color: "var(--parchment)" }} className="text-sm font-medium">
+              BookNest
+            </span>
+          </div>
+          <p style={{ fontFamily: "var(--fontMono)", color: "var(--parchment)", opacity: 0.4 }} className="text-xs">
+>>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
             © {new Date().getFullYear()} BookNest. Kept, not just tracked.
           </p>
         </div>
