@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 
-<<<<<<< HEAD
 import type { Page, Book, AuthMode } from "./types";
-=======
-import type { Page, Book } from "./types";
->>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
 
 import { Sidebar } from "./components/layout/Sidebar";
 import { Navbar } from "./components/layout/Navbar";
@@ -33,10 +29,7 @@ export default function App() {
   const { isAuthenticated, setIsAuthenticated } = useAuth();
   const { isDark, setIsDark } = useTheme();
   const [showAuth, setShowAuth] = useState(false);
-<<<<<<< HEAD
   const [authMode, setAuthMode] = useState<AuthMode>("signin");
-=======
->>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
   const [currentPage, setCurrentPage] = useState<Page>(ROUTE_PAGES.dashboard);
   const [books, setBooks] = useState<Book[]>(MOCK_BOOKS);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
@@ -117,7 +110,6 @@ export default function App() {
     setShowAuth(false); // send them back to the landing page, not straight to the auth form
   }
 
-<<<<<<< HEAD
   function openSignup() {
     setAuthMode("signup");
     setShowAuth(true);
@@ -128,13 +120,10 @@ export default function App() {
     setShowAuth(true);
   }
 
-=======
->>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
   if (!isAuthenticated) {
     return (
       <>
         {showAuth ? (
-<<<<<<< HEAD
           <AuthPage
             initialMode={authMode}
             onAuth={() => setIsAuthenticated(true)}
@@ -149,11 +138,6 @@ export default function App() {
             isDark={isDark}
             onToggleDark={() => setIsDark(!isDark)}
           />
-=======
-          <AuthPage onAuth={() => setIsAuthenticated(true)} onBack={() => setShowAuth(false)} />
-        ) : (
-          <LandingPage onGetStarted={() => setShowAuth(true)} onSignIn={() => setShowAuth(true)} />
->>>>>>> 6c3912eb0e8d6ceb2a9ea7f6d95bd954e26e645d
         )}
         {toast && <Toast message={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
       </>
