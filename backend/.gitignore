@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.env
+booknest.db
+.venv/
+venv/
