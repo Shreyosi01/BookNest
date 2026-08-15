@@ -7,6 +7,7 @@ interface NavbarProps {
   onMobileMenuOpen: () => void;
   searchQuery: string;
   onSearch: (q: string) => void;
+  userName: string;
 }
 
 const NOTIFICATIONS = [
@@ -15,7 +16,14 @@ const NOTIFICATIONS = [
   { msg: "Monthly goal: 75% complete.", time: "3d ago", color: "var(--primary)" },
 ];
 
-export function Navbar({ isDark, onToggleDark, onMobileMenuOpen, searchQuery, onSearch }: NavbarProps) {
+function getInitials(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "?";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+export function Navbar({ isDark, onToggleDark, onMobileMenuOpen, searchQuery, onSearch, userName }: NavbarProps) {
   const [showNotifs, setShowNotifs] = useState(false);
   return (
     <header className="h-16 bg-card border-b border-border flex items-center gap-4 px-4 lg:px-6">
@@ -71,11 +79,11 @@ export function Navbar({ isDark, onToggleDark, onMobileMenuOpen, searchQuery, on
 
         <div className="flex items-center gap-2.5 pl-2 border-l border-border ml-1">
           <div className="text-right hidden sm:block">
-            <p className="text-xs font-medium text-foreground">Alex Rivera</p>
+            <p className="text-xs font-medium text-foreground">{userName}</p>
             <p className="text-xs text-muted-foreground">avid reader</p>
           </div>
           <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-primary-foreground text-sm font-bold">
-            AR
+            {getInitials(userName)}
           </div>
         </div>
       </div>

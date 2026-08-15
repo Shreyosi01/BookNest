@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BookOpen, ArrowRight, ArrowLeft, Check, Sun, Moon, Eye, EyeOff } from "lucide-react";
+import { BookOpen, ArrowRight, ArrowLeft, Check, Sun, Moon, Eye, EyeOff, AlertCircle } from "lucide-react";
 import type { AuthMode } from "../../types";
 
 const LIGHT_TOKENS = {
@@ -89,25 +89,39 @@ function Field({
 }
 
 interface AuthPageProps {
-  onAuth: () => void;
   onBack: () => void;
   initialMode?: AuthMode;
   isDark: boolean;
   onToggleDark: () => void;
+  onLogin: (email: string, password: string) => Promise<boolean>;
+  onSignup: (name: string, email: string, password: string) => Promise<boolean>;
+  authError: string | null;
 }
 
-export default function AuthPage({ onAuth, onBack, initialMode = "signin", isDark, onToggleDark }: AuthPageProps) {
+export default function AuthPage({
+  onBack, initialMode = "signin", isDark, onToggleDark, onLogin, onSignup, authError,
+}: AuthPageProps) {
   const TOKENS = isDark ? DARK_TOKENS : LIGHT_TOKENS;
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (mode === "forgot") { setSubmitted(true); return; }
-    onAuth();
+
+    setSubmitting(true);
+    if (mode === "signin") {
+      await onLogin(email, password);
+    } else {
+      await onSignup(name, email, password);
+    }
+    setSubmitting(false);
+    // On success, isAuthenticated flips in the parent and this page unmounts automatically —
+    // nothing further to do here. On failure, authError is passed back in and shown below.
   }
 
   return (
@@ -230,6 +244,16 @@ export default function AuthPage({ onAuth, onBack, initialMode = "signin", isDar
                   : "Enter your email to receive a reset link"}
               </p>
 
+              {authError && (
+                <div
+                  className="flex items-center gap-2 px-4 py-3 rounded-sm mb-4 text-sm"
+                  style={{ background: "color-mix(in srgb, var(--wine) 12%, transparent)", color: "var(--wine)", fontFamily: "var(--fontBody)" }}
+                >
+                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                  {authError}
+                </div>
+              )}
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 {mode === "signup" && (
                   <Field label="Full name" value={name} onChange={setName} placeholder="Alex Rivera" required />
@@ -254,11 +278,14 @@ export default function AuthPage({ onAuth, onBack, initialMode = "signin", isDar
 
                 <button
                   type="submit"
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-sm text-sm font-medium mt-2 transition-transform hover:-translate-y-0.5"
+                  disabled={submitting}
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-sm text-sm font-medium mt-2 transition-transform hover:-translate-y-0.5 disabled:opacity-60 disabled:pointer-events-none"
                   style={{ background: "var(--brass)", color: "var(--ink)", fontFamily: "var(--fontBody)" }}
                 >
-                  {mode === "signin" ? "Sign in" : mode === "signup" ? "Create account" : "Send reset link"}
-                  <ArrowRight className="w-4 h-4" />
+                  {submitting
+                    ? "Please wait…"
+                    : mode === "signin" ? "Sign in" : mode === "signup" ? "Create account" : "Send reset link"}
+                  {!submitting && <ArrowRight className="w-4 h-4" />}
                 </button>
               </form>
 

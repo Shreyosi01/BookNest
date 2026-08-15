@@ -2,6 +2,12 @@ export type Page = "dashboard" | "library" | "book-detail" | "add-book" | "edit-
 export type ReadingStatus = "reading" | "completed" | "paused" | "wishlist" | "not-started";
 export type AuthMode = "signin" | "signup" | "forgot";
 
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
 export interface Book {
   id: string;
   title: string;

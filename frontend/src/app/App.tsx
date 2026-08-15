@@ -16,9 +16,8 @@ import AnalyticsPageView from "./pages/AnalyticsPage";
 import ProfilePageView from "./pages/ProfilePage";
 import SettingsPageView from "./pages/SettingsPage";
 import { ConfirmModal, Toast } from "./pages/pageHelpers";
-import { MOCK_BOOKS } from "./data/books";
 import { ROUTE_PAGES } from "./constants";
-import { addBookToLibrary, deleteBookFromLibrary, moveBookToLibrary, toggleFavoriteBook, updateBookInLibrary } from "./services/bookService";
+import * as bookService from "./services/bookService";
 import { useBookSearch } from "./hooks/useBookSearch";
 import { useTheme } from "./hooks/useTheme";
 import { useAuth } from "./hooks/useAuth";
@@ -26,12 +25,13 @@ import { useAuth } from "./hooks/useAuth";
 // ─── App ──────────────────────────────────────────────────────────────────────
 
 export default function App() {
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, user, authError, login, signup, logout } = useAuth();
   const { isDark, setIsDark } = useTheme();
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState<AuthMode>("signin");
   const [currentPage, setCurrentPage] = useState<Page>(ROUTE_PAGES.dashboard);
-  const [books, setBooks] = useState<Book[]>(MOCK_BOOKS);
+  const [books, setBooks] = useState<Book[]>([]);
+  const [booksLoading, setBooksLoading] = useState(false);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [editingBook, setEditingBook] = useState<Book | null>(null);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -40,6 +40,20 @@ export default function App() {
   const [deleteTarget, setDeleteTarget] = useState<Book | null>(null);
   const [previousPage, setPreviousPage] = useState<Page>(ROUTE_PAGES.library);
   const filteredBooks = useBookSearch(books, searchQuery);
+
+  // Load this user's books once they're authenticated; clear them on logout.
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setBooks([]);
+      return;
+    }
+    setBooksLoading(true);
+    bookService
+      .listBooks()
+      .then(setBooks)
+      .catch(() => showToast("Couldn't load your library. Try refreshing.", "error"))
+      .finally(() => setBooksLoading(false));
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (toast) {
@@ -73,40 +87,63 @@ export default function App() {
     setDeleteTarget(book);
   }
 
-  function confirmDelete() {
+  async function confirmDelete() {
     if (!deleteTarget) return;
-    setBooks((prev) => deleteBookFromLibrary(prev, deleteTarget.id));
-    showToast(`"${deleteTarget.title}" removed from library`);
-    setDeleteTarget(null);
-    if (currentPage === ROUTE_PAGES.bookDetail) navigate(ROUTE_PAGES.library as Page);
-  }
-
-  function handleToggleFavorite(id: string) {
-    setBooks((prev) => toggleFavoriteBook(prev, id));
-    const book = books.find((b) => b.id === id);
-    if (book) showToast(book.favorite ? "Removed from favorites" : "Added to favorites");
-  }
-
-  function handleSaveBook(data: Partial<Book>) {
-    if (editingBook) {
-      setBooks((prev) => updateBookInLibrary(prev, editingBook.id, data));
-      showToast("Book updated successfully");
-      setEditingBook(null);
-      navigate(ROUTE_PAGES.library as Page);
-    } else {
-      setBooks((prev) => addBookToLibrary(prev, data));
-      showToast("Book added to library!");
-      navigate(ROUTE_PAGES.library as Page);
+    const target = deleteTarget;
+    try {
+      await bookService.deleteBook(target.id);
+      setBooks((prev) => prev.filter((b) => b.id !== target.id));
+      showToast(`"${target.title}" removed from library`);
+      if (currentPage === ROUTE_PAGES.bookDetail) navigate(ROUTE_PAGES.library as Page);
+    } catch {
+      showToast("Couldn't delete that book. Try again.", "error");
+    } finally {
+      setDeleteTarget(null);
     }
   }
 
-  function handleMoveToLibrary(id: string) {
-    setBooks((prev) => moveBookToLibrary(prev, id));
-    showToast("Book moved to library!");
+  async function handleToggleFavorite(id: string) {
+    const book = books.find((b) => b.id === id);
+    if (!book) return;
+    try {
+      const updated = await bookService.toggleFavorite(id, !book.favorite);
+      setBooks((prev) => prev.map((b) => (b.id === id ? updated : b)));
+      showToast(updated.favorite ? "Added to favorites" : "Removed from favorites");
+    } catch {
+      showToast("Couldn't update favorites. Try again.", "error");
+    }
+  }
+
+  async function handleSaveBook(data: Partial<Book>) {
+    try {
+      if (editingBook) {
+        const updated = await bookService.updateBook(editingBook.id, data);
+        setBooks((prev) => prev.map((b) => (b.id === editingBook.id ? updated : b)));
+        showToast("Book updated successfully");
+        setEditingBook(null);
+      } else {
+        const created = await bookService.createBook(data);
+        setBooks((prev) => [created, ...prev]);
+        showToast("Book added to library!");
+      }
+      navigate(ROUTE_PAGES.library as Page);
+    } catch {
+      showToast("Couldn't save that book. Try again.", "error");
+    }
+  }
+
+  async function handleMoveToLibrary(id: string) {
+    try {
+      const updated = await bookService.moveToLibrary(id);
+      setBooks((prev) => prev.map((b) => (b.id === id ? updated : b)));
+      showToast("Book moved to library!");
+    } catch {
+      showToast("Couldn't move that book. Try again.", "error");
+    }
   }
 
   function handleLogout() {
-    setIsAuthenticated(false);
+    logout();
     setShowAuth(false); // send them back to the landing page, not straight to the auth form
   }
 
@@ -120,16 +157,24 @@ export default function App() {
     setShowAuth(true);
   }
 
+  // Brief gate while we check localStorage for an existing session, so we don't
+  // flash the landing page for a logged-in user on refresh.
+  if (authLoading) {
+    return <div className="min-h-screen flex items-center justify-center text-muted-foreground text-sm">Loading…</div>;
+  }
+
   if (!isAuthenticated) {
     return (
       <>
         {showAuth ? (
           <AuthPage
             initialMode={authMode}
-            onAuth={() => setIsAuthenticated(true)}
             onBack={() => setShowAuth(false)}
             isDark={isDark}
             onToggleDark={() => setIsDark(!isDark)}
+            onLogin={login}
+            onSignup={signup}
+            authError={authError}
           />
         ) : (
           <LandingPage
@@ -218,9 +263,14 @@ export default function App() {
           onMobileMenuOpen={() => setIsMobileSidebarOpen(true)}
           searchQuery={searchQuery}
           onSearch={setSearchQuery}
+          userName={user?.name ?? "Reader"}
         />
         <main className="flex-1 p-5 lg:p-8 overflow-y-auto">
-          {renderPage()}
+          {booksLoading ? (
+            <div className="text-sm text-muted-foreground">Loading your library…</div>
+          ) : (
+            renderPage()
+          )}
         </main>
       </div>
 
