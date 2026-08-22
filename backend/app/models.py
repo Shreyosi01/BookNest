@@ -39,6 +39,10 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+    # Updated automatically on every authenticated request (see dependencies.bump_streak).
+    current_streak = Column(Integer, default=0)
+    last_active_date = Column(Date, nullable=True)
+
     books = relationship("Book", back_populates="owner", cascade="all, delete-orphan")
 
 
@@ -64,5 +68,10 @@ class Book(Base):
     favorite = Column(Boolean, default=False)
     date_added = Column(Date, default=date.today)
     published_year = Column(Integer, default=0)
+
+    # Set automatically the moment status becomes "completed" (see routers/books.py);
+    # cleared if the status is changed away from "completed". Powers the real
+    # monthly-activity charts on the Dashboard and Goals pages.
+    completed_at = Column(Date, nullable=True)
 
     owner = relationship("User", back_populates="books")

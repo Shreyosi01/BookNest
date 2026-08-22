@@ -1,3 +1,4 @@
+from datetime import date, timedelta
 from typing import Generator
 
 from fastapi import Depends, HTTPException, status
@@ -22,6 +23,28 @@ def get_db() -> Generator[Session, None, None]:
         db.close()
 
 
+def bump_streak(user: models.User, db: Session) -> None:
+    """Updates the user's reading streak based on real usage, not a fake number.
+    Called on every authenticated request. Increments once per calendar day:
+    - same day as last active -> no change
+    - exactly one day since last active -> streak += 1
+    - more than one day (or first ever visit) -> streak resets to 1
+    """
+    today = date.today()
+    if user.last_active_date == today:
+        return
+
+    if user.last_active_date == today - timedelta(days=1):
+        user.current_streak = (user.current_streak or 0) + 1
+    else:
+        user.current_streak = 1
+
+    user.last_active_date = today
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
     db: Session = Depends(get_db),
@@ -41,4 +64,5 @@ def get_current_user(
     if user is None:
         raise credentials_exception
 
+    bump_streak(user, db)
     return user
