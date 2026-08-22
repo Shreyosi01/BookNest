@@ -40,3 +40,15 @@ def login(payload: schemas.LoginRequest, db: Session = Depends(get_db)):
 @router.get("/me", response_model=schemas.UserOut)
 def read_current_user(current_user: models.User = Depends(get_current_user)):
     return current_user
+
+
+@router.put("/me", response_model=schemas.UserOut)
+def update_current_user(
+    payload: schemas.UpdateProfileRequest,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    current_user.name = payload.name
+    db.commit()
+    db.refresh(current_user)
+    return current_user

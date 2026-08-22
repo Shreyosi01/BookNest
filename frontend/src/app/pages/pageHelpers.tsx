@@ -58,7 +58,6 @@ export function StarRating({ rating, onRate, size = "sm" }: { rating: number; on
 }
 
 export function ProgressBar({ value, color = "primary" }: { value: number; color?: "primary" | "emerald" | "amber" }) {
-  // Theme CSS variables, not static Tailwind colors, so this stays correct in both light and dark mode.
   const colorMap: Record<string, string> = {
     primary: "var(--primary)",
     emerald: "var(--chart-4)",
@@ -135,8 +134,11 @@ export function Toast({ message, type, onClose }: { message: string; type: "succ
   );
 }
 
-export function ConfirmModal({ title, message, onConfirm, onCancel }: {
+export function ConfirmModal({
+  title, message, onConfirm, onCancel, confirmLabel = "Delete", variant = "danger",
+}: {
   title: string; message: string; onConfirm: () => void; onCancel: () => void;
+  confirmLabel?: string; variant?: "danger" | "primary";
 }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -146,7 +148,7 @@ export function ConfirmModal({ title, message, onConfirm, onCancel }: {
         <p className="text-sm text-muted-foreground mb-6">{message}</p>
         <div className="flex gap-3">
           <Btn variant="outline" onClick={onCancel} className="flex-1">Cancel</Btn>
-          <Btn variant="danger" onClick={onConfirm} className="flex-1">Delete</Btn>
+          <Btn variant={variant} onClick={onConfirm} className="flex-1">{confirmLabel}</Btn>
         </div>
       </div>
     </div>

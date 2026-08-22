@@ -1,8 +1,10 @@
+import { useState } from "react";
 import {
   BookOpen, LayoutDashboard, Target, BarChart3, Sparkles,
   User, Settings, LogOut, Bookmark, Library,
 } from "lucide-react";
 import type { Page } from "../../types";
+import { ConfirmModal } from "../../pages/pageHelpers";
 
 const NAV_ITEMS = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -27,6 +29,8 @@ interface SidebarProps {
 }
 
 export function Sidebar({ currentPage, onNavigate, isMobileOpen, onMobileClose, onLogout }: SidebarProps) {
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
   return (
     <>
       {isMobileOpen && (
@@ -98,7 +102,7 @@ export function Sidebar({ currentPage, onNavigate, isMobileOpen, onMobileClose, 
             );
           })}
           <button
-            onClick={onLogout}
+            onClick={() => setShowLogoutConfirm(true)}
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-destructive/70 hover:text-destructive hover:bg-destructive/10 transition-all"
           >
             <LogOut className="w-4 h-4" />
@@ -106,6 +110,17 @@ export function Sidebar({ currentPage, onNavigate, isMobileOpen, onMobileClose, 
           </button>
         </div>
       </aside>
+
+      {showLogoutConfirm && (
+        <ConfirmModal
+          title="Log out"
+          message="Are you sure you want to log out of BookNest?"
+          confirmLabel="Log out"
+          variant="primary"
+          onConfirm={() => { setShowLogoutConfirm(false); onLogout(); }}
+          onCancel={() => setShowLogoutConfirm(false)}
+        />
+      )}
     </>
   );
 }
