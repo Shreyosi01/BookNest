@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { clearToken, getToken, setToken as persistToken } from "../services/apiClient";
-import { fetchCurrentUser, login as loginRequest, signup as signupRequest } from "../services/authService";
+import {
+  fetchCurrentUser,
+  login as loginRequest,
+  signup as signupRequest,
+  updateProfile as updateProfileRequest,
+} from "../services/authService";
 import type { User } from "../types";
 
 export function useAuth() {
@@ -60,11 +65,23 @@ export function useAuth() {
     }
   }
 
+  async function updateProfile(name: string): Promise<boolean> {
+    setAuthError(null);
+    try {
+      const updated = await updateProfileRequest(name);
+      setUser(updated);
+      return true;
+    } catch (err) {
+      setAuthError(err instanceof Error ? err.message : "Couldn't update your profile. Please try again.");
+      return false;
+    }
+  }
+
   function logout() {
     clearToken();
     setUser(null);
     setIsAuthenticated(false);
   }
 
-  return { isAuthenticated, isLoading, user, authError, signup, login, logout };
+  return { isAuthenticated, isLoading, user, authError, signup, login, logout, updateProfile };
 }

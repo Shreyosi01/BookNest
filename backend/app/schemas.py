@@ -38,6 +38,10 @@ class UserOut(CamelModel):
     current_streak: int = 0
 
 
+class UpdateProfileRequest(CamelModel):
+    name: str = Field(min_length=1)
+
+
 # ── Books ─────────────────────────────────────────────────────────────────
 
 class BookBase(CamelModel):

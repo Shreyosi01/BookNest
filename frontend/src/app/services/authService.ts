@@ -17,3 +17,7 @@ export function login(email: string, password: string) {
 export function fetchCurrentUser() {
   return api.get<User>("/auth/me");
 }
+
+export function updateProfile(name: string) {
+  return api.put<User>("/auth/me", { name });
+}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import type { Page, Book, AuthMode, User } from "./types";
+import type { Page, Book, AuthMode, User, ReadingStatus } from "./types";
 
 import { Sidebar } from "./components/layout/Sidebar";
 import { Navbar } from "./components/layout/Navbar";
@@ -27,7 +27,7 @@ const EMPTY_USER: User = { id: "", name: "Reader", email: "", currentStreak: 0 }
 // ─── App ──────────────────────────────────────────────────────────────────────
 
 export default function App() {
-  const { isAuthenticated, isLoading: authLoading, user, authError, login, signup, logout } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, user, authError, login, signup, logout, updateProfile } = useAuth();
   const { isDark, setIsDark } = useTheme();
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState<AuthMode>("signin");
@@ -36,6 +36,7 @@ export default function App() {
   const [booksLoading, setBooksLoading] = useState(false);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [editingBook, setEditingBook] = useState<Book | null>(null);
+  const [addDefaultStatus, setAddDefaultStatus] = useState<ReadingStatus | undefined>(undefined);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -212,7 +213,7 @@ export default function App() {
             onView={handleViewBook}
             onEdit={handleEditBook}
             onDelete={handleDeleteBook}
-            onAdd={() => { setEditingBook(null); navigate("add-book"); }}
+            onAdd={() => { setEditingBook(null); setAddDefaultStatus(undefined); navigate("add-book"); }}
             onToggleFavorite={handleToggleFavorite}
           />
         );
@@ -227,7 +228,7 @@ export default function App() {
           />
         ) : null;
       case "add-book":
-        return <AddBookPageView onSave={handleSaveBook} onCancel={() => navigate("library")} />;
+        return <AddBookPageView onSave={handleSaveBook} onCancel={() => navigate("library")} defaultStatus={addDefaultStatus} />;
       case "edit-book":
         return editingBook ? (
           <AddBookPageView
@@ -242,7 +243,7 @@ export default function App() {
             books={books}
             onMoveToLibrary={handleMoveToLibrary}
             onDelete={handleDeleteBook}
-            onAdd={() => { setEditingBook(null); navigate("add-book"); }}
+            onAdd={() => { setEditingBook(null); setAddDefaultStatus("wishlist"); navigate("add-book"); }}
           />
         );
       case "goals":
@@ -250,9 +251,16 @@ export default function App() {
       case "analytics":
         return <AnalyticsPageView books={books} />;
       case "profile":
-        return <ProfilePageView books={books} user={currentUser} />;
+        return (
+          <ProfilePageView
+            books={books}
+            user={currentUser}
+            onUpdateProfile={updateProfile}
+            onLogout={handleLogout}
+          />
+        );
       case "settings":
-        return <SettingsPageView />;
+        return <SettingsPageView isDark={isDark} onToggleDark={() => setIsDark(!isDark)} />;
       default:
         return null;
     }
@@ -276,6 +284,9 @@ export default function App() {
           searchQuery={searchQuery}
           onSearch={setSearchQuery}
           userName={currentUser.name}
+          streak={currentUser.currentStreak}
+          books={books}
+          onProfileClick={() => navigate("profile")}
         />
         <main className="flex-1 p-5 lg:p-8 overflow-y-auto">
           {booksLoading ? (

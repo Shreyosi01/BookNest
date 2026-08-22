@@ -1,6 +1,17 @@
-import { Bell, Moon, ShieldCheck, Sparkles } from "lucide-react";
+import { useState } from "react";
+import { Bell, BellOff, Moon, Sun, ShieldCheck, ShieldOff, Sparkles } from "lucide-react";
 
-export default function SettingsPage() {
+interface SettingsPageProps {
+  isDark: boolean;
+  onToggleDark: () => void;
+}
+
+export default function SettingsPage({ isDark, onToggleDark }: SettingsPageProps) {
+  // These two aren't backed by the server yet — they reset on refresh. Worth
+  // a small backend field if you want them to persist across sessions.
+  const [notificationsOn, setNotificationsOn] = useState(true);
+  const [privacyProtected, setPrivacyProtected] = useState(true);
+
   return (
     <div className="max-w-3xl space-y-6">
       <div>
@@ -14,10 +25,13 @@ export default function SettingsPage() {
             <h3 className="font-semibold text-foreground">Dark Mode</h3>
             <p className="text-sm text-muted-foreground">Switch between light and dark themes</p>
           </div>
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-muted">
-            <Moon className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm font-medium text-foreground">Auto</span>
-          </div>
+          <button
+            onClick={onToggleDark}
+            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-muted hover:bg-muted/70 transition-colors"
+          >
+            {isDark ? <Moon className="w-4 h-4 text-muted-foreground" /> : <Sun className="w-4 h-4 text-muted-foreground" />}
+            <span className="text-sm font-medium text-foreground">{isDark ? "Dark" : "Light"}</span>
+          </button>
         </div>
 
         <div className="flex items-center justify-between">
@@ -25,10 +39,13 @@ export default function SettingsPage() {
             <h3 className="font-semibold text-foreground">Notifications</h3>
             <p className="text-sm text-muted-foreground">Get reminders for reading goals and milestones</p>
           </div>
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-muted">
-            <Bell className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm font-medium text-foreground">On</span>
-          </div>
+          <button
+            onClick={() => setNotificationsOn((v) => !v)}
+            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-muted hover:bg-muted/70 transition-colors"
+          >
+            {notificationsOn ? <Bell className="w-4 h-4 text-muted-foreground" /> : <BellOff className="w-4 h-4 text-muted-foreground" />}
+            <span className="text-sm font-medium text-foreground">{notificationsOn ? "On" : "Off"}</span>
+          </button>
         </div>
 
         <div className="flex items-center justify-between">
@@ -36,10 +53,13 @@ export default function SettingsPage() {
             <h3 className="font-semibold text-foreground">Privacy</h3>
             <p className="text-sm text-muted-foreground">Keep your library data private and secure</p>
           </div>
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-muted">
-            <ShieldCheck className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm font-medium text-foreground">Protected</span>
-          </div>
+          <button
+            onClick={() => setPrivacyProtected((v) => !v)}
+            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-muted hover:bg-muted/70 transition-colors"
+          >
+            {privacyProtected ? <ShieldCheck className="w-4 h-4 text-muted-foreground" /> : <ShieldOff className="w-4 h-4 text-muted-foreground" />}
+            <span className="text-sm font-medium text-foreground">{privacyProtected ? "Protected" : "Public"}</span>
+          </button>
         </div>
       </div>
 
