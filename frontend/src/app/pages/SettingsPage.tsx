@@ -43,7 +43,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-r from-primary/10 to-violet-500/10 border border-primary/20 rounded-2xl p-5">
+      <div className="bg-gradient-to-r from-primary/10 to-[var(--chart-5)]/10 border border-primary/20 rounded-2xl p-5">
         <div className="flex items-center gap-2 mb-2">
           <Sparkles className="w-4 h-4 text-primary" />
           <h3 className="font-semibold text-foreground">Pro Tip</h3>

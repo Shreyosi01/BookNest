@@ -50,7 +50,10 @@ export default function AnalyticsPage({ books }: AnalyticsPageProps) {
               <p className="text-xs text-muted-foreground uppercase tracking-wide">Reading Now</p>
               <p className="text-2xl font-bold text-foreground">{reading}</p>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center"
+              style={{ background: "color-mix(in srgb, var(--chart-4) 15%, transparent)", color: "var(--chart-4)" }}
+            >
               <Activity className="w-5 h-5" />
             </div>
           </div>
@@ -63,7 +66,10 @@ export default function AnalyticsPage({ books }: AnalyticsPageProps) {
               <p className="text-xs text-muted-foreground uppercase tracking-wide">Avg Rating</p>
               <p className="text-2xl font-bold text-foreground">{avgRating}</p>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center"
+              style={{ background: "color-mix(in srgb, var(--accent) 15%, transparent)", color: "var(--accent)" }}
+            >
               <TrendingUp className="w-5 h-5" />
             </div>
           </div>
@@ -82,7 +88,7 @@ export default function AnalyticsPage({ books }: AnalyticsPageProps) {
             <XAxis dataKey="month" tick={{ fontSize: 12 }} />
             <YAxis tick={{ fontSize: 12 }} />
             <Tooltip contentStyle={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: "12px", fontSize: "12px" }} />
-            <Line type="monotone" dataKey="pages" stroke="#4F46E5" strokeWidth={3} dot={{ r: 4 }} />
+            <Line type="monotone" dataKey="pages" stroke="var(--primary)" strokeWidth={3} dot={{ r: 4 }} />
           </LineChart>
         </ResponsiveContainer>
       </div>

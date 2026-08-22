@@ -25,8 +25,11 @@ export default function WishlistPage({ books, onMoveToLibrary, onDelete, onAdd }
 
       {wishlist.length === 0 ? (
         <div className="text-center py-20">
-          <div className="w-16 h-16 bg-purple-50 dark:bg-purple-950/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Bookmark className="w-8 h-8 text-purple-500" />
+          <div
+            className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+            style={{ background: "color-mix(in srgb, var(--chart-5) 15%, transparent)" }}
+          >
+            <Bookmark className="w-8 h-8" style={{ color: "var(--chart-5)" }} />
           </div>
           <h3 className="font-semibold text-foreground mb-1">Your wishlist is empty</h3>
           <p className="text-muted-foreground text-sm mb-4">Add books you want to read next</p>

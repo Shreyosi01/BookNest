@@ -14,6 +14,7 @@ import {
 
 import Btn from "../components/common/Btn";
 import StatusBadge from "../components/common/StatusBadge";
+import { CategoryBadge, StarRating, ProgressBar } from "./pageHelpers";
 import type { Book } from "../types";
 
 interface LibraryPageProps {
@@ -37,47 +38,6 @@ const CATEGORIES = [
   "History",
   "Science",
 ];
-
-function CategoryBadge({ category }: { category: string }) {
-  const map: Record<string, string> = {
-    Fiction: "bg-indigo-50 text-indigo-700",
-    "Non-Fiction": "bg-teal-50 text-teal-700",
-    Technology: "bg-cyan-50 text-cyan-700",
-    "Self-Help": "bg-emerald-50 text-emerald-700",
-    Psychology: "bg-violet-50 text-violet-700",
-    Memoir: "bg-rose-50 text-rose-700",
-    Design: "bg-pink-50 text-pink-700",
-    Philosophy: "bg-amber-50 text-amber-700",
-    History: "bg-orange-50 text-orange-700",
-    Science: "bg-sky-50 text-sky-700",
-  };
-
-  return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${map[category] ?? "bg-slate-100 text-slate-600"}`}>
-      {category}
-    </span>
-  );
-}
-
-function StarRating({ rating }: { rating: number }) {
-  return (
-    <div className="flex items-center gap-0.5">
-      {Array.from({ length: 5 }).map((_, index) => (
-        <span key={index} className={index < rating ? "text-amber-400" : "text-slate-300"}>
-          ★
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function ProgressBar({ value }: { value: number }) {
-  return (
-    <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-      <div className="h-full rounded-full bg-primary" style={{ width: `${Math.max(0, Math.min(100, value))}%` }} />
-    </div>
-  );
-}
 
 function BookCard({
   book,
@@ -127,7 +87,7 @@ function BookCard({
           </button>
           <button onClick={onView} className="rounded-lg p-2 text-muted-foreground hover:bg-muted"><Eye className="h-4 w-4" /></button>
           <button onClick={onEdit} className="rounded-lg p-2 text-muted-foreground hover:bg-muted"><Edit2 className="h-4 w-4" /></button>
-          <button onClick={onDelete} className="rounded-lg p-2 text-red-400 hover:bg-muted"><Trash2 className="h-4 w-4" /></button>
+          <button onClick={onDelete} className="rounded-lg p-2 text-destructive hover:bg-destructive/10"><Trash2 className="h-4 w-4" /></button>
         </div>
       </div>
     );
@@ -269,13 +229,13 @@ export default function LibraryPage({
           <div className="flex items-center overflow-hidden rounded-xl border border-border bg-input-background">
             <button
               onClick={() => setViewMode("grid")}
-              className={`p-2 transition-colors ${viewMode === "grid" ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"}`}
+              className={`p-2 transition-colors ${viewMode === "grid" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
             >
               <Grid3X3 className="h-4 w-4" />
             </button>
             <button
               onClick={() => setViewMode("list")}
-              className={`p-2 transition-colors ${viewMode === "list" ? "bg-primary text-white" : "text-muted-foreground hover:text-foreground"}`}
+              className={`p-2 transition-colors ${viewMode === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
             >
               <List className="h-4 w-4" />
             </button>
