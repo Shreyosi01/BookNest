@@ -6,6 +6,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  currentStreak: number;
 }
 
 export interface Book {
@@ -26,4 +27,6 @@ export interface Book {
   favorite: boolean;
   dateAdded: string;
   publishedYear: number;
+  /** Set automatically by the backend the moment status becomes "completed". */
+  completedAt: string | null;
 }

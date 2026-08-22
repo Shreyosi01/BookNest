@@ -35,6 +35,7 @@ class UserOut(CamelModel):
     id: str
     name: str
     email: EmailStr
+    current_streak: int = 0
 
 
 # ── Books ─────────────────────────────────────────────────────────────────
@@ -84,3 +85,4 @@ class BookUpdate(CamelModel):
 class BookOut(BookBase):
     id: str
     date_added: date
+    completed_at: Optional[date] = None

@@ -1,3 +1,5 @@
+from datetime import date
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -18,6 +20,15 @@ def _get_owned_book(book_id: str, db: Session, current_user: models.User) -> mod
     return book
 
 
+def _sync_completed_at(book: models.Book, new_status: str) -> None:
+    """Keeps completed_at truthful: set the first time status becomes 'completed',
+    cleared if status changes away from it (so re-marking as reading resets it)."""
+    if new_status == "completed" and book.completed_at is None:
+        book.completed_at = date.today()
+    elif new_status != "completed":
+        book.completed_at = None
+
+
 @router.get("", response_model=list[schemas.BookOut])
 def list_books(
     db: Session = Depends(get_db),
@@ -33,6 +44,7 @@ def create_book(
     current_user: models.User = Depends(get_current_user),
 ):
     book = models.Book(**payload.model_dump(), owner_id=current_user.id)
+    _sync_completed_at(book, book.status)
     db.add(book)
     db.commit()
     db.refresh(book)
@@ -56,8 +68,11 @@ def update_book(
     current_user: models.User = Depends(get_current_user),
 ):
     book = _get_owned_book(book_id, db, current_user)
-    for field, value in payload.model_dump(exclude_unset=True).items():
+    updates = payload.model_dump(exclude_unset=True)
+    for field, value in updates.items():
         setattr(book, field, value)
+    if "status" in updates:
+        _sync_completed_at(book, updates["status"])
     db.commit()
     db.refresh(book)
     return book

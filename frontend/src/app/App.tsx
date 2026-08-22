@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import type { Page, Book, AuthMode } from "./types";
+import type { Page, Book, AuthMode, User } from "./types";
 
 import { Sidebar } from "./components/layout/Sidebar";
 import { Navbar } from "./components/layout/Navbar";
@@ -21,6 +21,8 @@ import * as bookService from "./services/bookService";
 import { useBookSearch } from "./hooks/useBookSearch";
 import { useTheme } from "./hooks/useTheme";
 import { useAuth } from "./hooks/useAuth";
+
+const EMPTY_USER: User = { id: "", name: "Reader", email: "", currentStreak: 0 };
 
 // ─── App ──────────────────────────────────────────────────────────────────────
 
@@ -189,10 +191,20 @@ export default function App() {
     );
   }
 
+  const currentUser = user ?? EMPTY_USER;
+
   function renderPage() {
     switch (currentPage) {
       case "dashboard":
-        return <DashboardPage books={books} onNavigate={navigate} onView={handleViewBook} />;
+        return (
+          <DashboardPage
+            books={books}
+            onNavigate={navigate}
+            onView={handleViewBook}
+            userName={currentUser.name}
+            streak={currentUser.currentStreak}
+          />
+        );
       case "library":
         return (
           <LibraryPage
@@ -238,7 +250,7 @@ export default function App() {
       case "analytics":
         return <AnalyticsPageView books={books} />;
       case "profile":
-        return <ProfilePageView books={books} />;
+        return <ProfilePageView books={books} user={currentUser} />;
       case "settings":
         return <SettingsPageView />;
       default:
@@ -263,7 +275,7 @@ export default function App() {
           onMobileMenuOpen={() => setIsMobileSidebarOpen(true)}
           searchQuery={searchQuery}
           onSearch={setSearchQuery}
-          userName={user?.name ?? "Reader"}
+          userName={currentUser.name}
         />
         <main className="flex-1 p-5 lg:p-8 overflow-y-auto">
           {booksLoading ? (
