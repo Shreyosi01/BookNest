@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 
-import type { Page, Book, AuthMode, User, ReadingStatus } from "./types";
+import type { Page, Book, AuthMode, User, CatalogBook } from "./types";
 
 import { Sidebar } from "./components/layout/Sidebar";
 import { Navbar } from "./components/layout/Navbar";
 import LandingPage from "./pages/LandingPage";
 import AuthPage from "./components/auth/AuthPage";
 import DashboardPage from "./pages/DashboardPage";
+import DiscoverPage from "./pages/DiscoverPage";
+import BookCatalogDetailPage from "./pages/BookCatalogDetailPage";
 import LibraryPage from "./pages/LibraryPage";
 import AddBookPageView from "./pages/AddBookPage";
 import BookDetailPageView from "./pages/BookDetailPage";
@@ -18,6 +20,8 @@ import SettingsPageView from "./pages/SettingsPage";
 import { ConfirmModal, Toast } from "./pages/pageHelpers";
 import { ROUTE_PAGES } from "./constants";
 import * as bookService from "./services/bookService";
+import * as catalogService from "./services/catalogService";
+import type { GoogleBookResult } from "./services/googleBooksService";
 import { useBookSearch } from "./hooks/useBookSearch";
 import { useTheme } from "./hooks/useTheme";
 import { useAuth } from "./hooks/useAuth";
@@ -36,7 +40,7 @@ export default function App() {
   const [booksLoading, setBooksLoading] = useState(false);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [editingBook, setEditingBook] = useState<Book | null>(null);
-  const [addDefaultStatus, setAddDefaultStatus] = useState<ReadingStatus | undefined>(undefined);
+  const [discoverBook, setDiscoverBook] = useState<CatalogBook | null>(null);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -145,6 +149,61 @@ export default function App() {
     }
   }
 
+  // Opens the full catalog detail page (cover, description, reviews, AI insight).
+  async function handleSelectDiscoverBook(result: GoogleBookResult) {
+    try {
+      const catalogBook = await catalogService.upsertCatalogBook(result);
+      setDiscoverBook(catalogBook);
+      navigate("discover-book" as Page);
+    } catch {
+      showToast("Couldn't open that book right now. Try again.", "error");
+    }
+  }
+
+  // Adds a book to the personal shelf from an already-open catalog record
+  // (used both by the detail page's buttons and by quick-add from search results).
+  async function addCatalogBookToShelf(catalogBook: CatalogBook, status: "wishlist" | "not-started") {
+    const created = await bookService.createBook({
+      title: catalogBook.title,
+      author: catalogBook.author,
+      isbn: catalogBook.isbn,
+      category: catalogBook.category,
+      genre: catalogBook.genre,
+      cover: catalogBook.cover,
+      publishedYear: catalogBook.publishedYear,
+      totalPages: catalogBook.totalPages,
+      status,
+      catalogBookId: catalogBook.id,
+    });
+    setBooks((prev) => [created, ...prev]);
+    showToast(status === "wishlist" ? "Added to your wishlist!" : "Added to your library!");
+  }
+
+  // "Add to Library"/"Add to Wishlist" from the full detail page — navigates away after.
+  async function handleAddFromDiscover(catalogBook: CatalogBook, status: "wishlist" | "not-started") {
+    try {
+      await addCatalogBookToShelf(catalogBook, status);
+      navigate((status === "wishlist" ? "wishlist" : "library") as Page);
+    } catch {
+      showToast("Couldn't add that book. Try again.", "error");
+    }
+  }
+
+  // Quick-add directly from a search result card — stays on Add Books so you can keep browsing.
+  async function handleQuickAddFromDiscover(result: GoogleBookResult, status: "wishlist" | "not-started") {
+    try {
+      const catalogBook = await catalogService.upsertCatalogBook(result);
+      await addCatalogBookToShelf(catalogBook, status);
+    } catch {
+      showToast("Couldn't add that book. Try again.", "error");
+    }
+  }
+
+  function handleManualAdd() {
+    setEditingBook(null);
+    navigate("add-book");
+  }
+
   function handleLogout() {
     logout();
     setShowAuth(false); // send them back to the landing page, not straight to the auth form
@@ -206,6 +265,22 @@ export default function App() {
             streak={currentUser.currentStreak}
           />
         );
+      case "discover":
+        return (
+          <DiscoverPage
+            onSelectBook={handleSelectDiscoverBook}
+            onQuickAdd={handleQuickAddFromDiscover}
+            onManualAdd={handleManualAdd}
+          />
+        );
+      case "discover-book":
+        return discoverBook ? (
+          <BookCatalogDetailPage
+            book={discoverBook}
+            onBack={() => navigate("discover" as Page)}
+            onAddToLibrary={handleAddFromDiscover}
+          />
+        ) : null;
       case "library":
         return (
           <LibraryPage
@@ -213,7 +288,7 @@ export default function App() {
             onView={handleViewBook}
             onEdit={handleEditBook}
             onDelete={handleDeleteBook}
-            onAdd={() => { setEditingBook(null); setAddDefaultStatus(undefined); navigate("add-book"); }}
+            onAdd={() => navigate("discover" as Page)}
             onToggleFavorite={handleToggleFavorite}
           />
         );
@@ -221,6 +296,7 @@ export default function App() {
         return selectedBook ? (
           <BookDetailPageView
             book={books.find((b) => b.id === selectedBook.id) || selectedBook}
+            currentUserId={currentUser.id}
             onBack={() => navigate(previousPage)}
             onEdit={() => handleEditBook(selectedBook)}
             onDelete={() => handleDeleteBook(selectedBook)}
@@ -228,7 +304,7 @@ export default function App() {
           />
         ) : null;
       case "add-book":
-        return <AddBookPageView onSave={handleSaveBook} onCancel={() => navigate("library")} defaultStatus={addDefaultStatus} />;
+        return <AddBookPageView onSave={handleSaveBook} onCancel={() => navigate("library")} />;
       case "edit-book":
         return editingBook ? (
           <AddBookPageView
@@ -243,7 +319,7 @@ export default function App() {
             books={books}
             onMoveToLibrary={handleMoveToLibrary}
             onDelete={handleDeleteBook}
-            onAdd={() => { setEditingBook(null); setAddDefaultStatus("wishlist"); navigate("add-book"); }}
+            onAdd={() => navigate("discover" as Page)}
           />
         );
       case "goals":

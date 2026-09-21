@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {
-  BookOpen, LayoutDashboard, Target, BarChart3, Sparkles,
+  BookOpen, LayoutDashboard, Target, BarChart3, Sparkles, Compass,
   User, Settings, LogOut, Bookmark, Library,
 } from "lucide-react";
 import type { Page } from "../../types";
@@ -8,6 +8,7 @@ import { ConfirmModal } from "../../pages/pageHelpers";
 
 const NAV_ITEMS = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { id: "discover", label: "Add Books", icon: Compass },
   { id: "library", label: "My Library", icon: Library },
   { id: "wishlist", label: "Wishlist", icon: Bookmark },
   { id: "goals", label: "Reading Goals", icon: Target },
@@ -54,7 +55,7 @@ export function Sidebar({ currentPage, onNavigate, isMobileOpen, onMobileClose, 
 
         <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
           {NAV_ITEMS.map((item) => {
-            const isActive = currentPage === item.id;
+            const isActive = currentPage === item.id || (item.id === "discover" && currentPage === "discover-book");
             return (
               <button
                 key={item.id}

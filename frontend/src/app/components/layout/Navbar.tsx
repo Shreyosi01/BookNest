@@ -8,10 +8,10 @@ interface NavbarProps {
   onMobileMenuOpen: () => void;
   searchQuery: string;
   onSearch: (q: string) => void;
-  userName: string;
-  streak: number;
-  books: Book[];
-  onProfileClick: () => void;
+  userName?: string;
+  streak?: number;
+  books?: Book[];
+  onProfileClick?: () => void;
 }
 
 function getInitials(name: string): string {
@@ -21,20 +21,20 @@ function getInitials(name: string): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-function buildNotifications(streak: number, books: Book[]) {
+function buildNotifications(streak: number = 0, books: Book[] = []) {
   const items: { msg: string; time: string; color: string }[] = [];
 
   if (streak > 0) {
     items.push({
       msg: `Reading streak: ${streak} day${streak === 1 ? "" : "s"}! Keep it up.`,
       time: "today",
-      color: "var(--accent)",
+      color: "var(--chart-1)",
     });
   }
 
   const oneWeekAgo = new Date();
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-  const addedThisWeek = books.filter((b) => new Date(b.dateAdded) >= oneWeekAgo).length;
+  const addedThisWeek = (books || []).filter((b) => new Date(b.dateAdded) >= oneWeekAgo).length;
   if (addedThisWeek > 0) {
     items.push({
       msg: `You've added ${addedThisWeek} book${addedThisWeek === 1 ? "" : "s"} this week.`,
@@ -45,7 +45,7 @@ function buildNotifications(streak: number, books: Book[]) {
 
   const now = new Date();
   const monthlyGoal = 4;
-  const monthlyRead = books.filter((b) => {
+  const monthlyRead = (books || []).filter((b) => {
     if (!b.completedAt) return false;
     const d = new Date(b.completedAt);
     return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
@@ -62,7 +62,15 @@ function buildNotifications(streak: number, books: Book[]) {
 }
 
 export function Navbar({
-  isDark, onToggleDark, onMobileMenuOpen, searchQuery, onSearch, userName, streak, books, onProfileClick,
+  isDark,
+  onToggleDark,
+  onMobileMenuOpen,
+  searchQuery,
+  onSearch,
+  userName = "Reader",
+  streak = 0,
+  books = [],
+  onProfileClick = () => {},
 }: NavbarProps) {
   const [showNotifs, setShowNotifs] = useState(false);
   const notifications = buildNotifications(streak, books);
