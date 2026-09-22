@@ -43,6 +43,41 @@ def create_book(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
+    existing = None
+    if payload.catalog_book_id:
+        existing = (
+            db.query(models.Book)
+            .filter(
+                models.Book.owner_id == current_user.id,
+                models.Book.catalog_book_id == payload.catalog_book_id,
+            )
+            .first()
+        )
+    if not existing and payload.title:
+        existing = (
+            db.query(models.Book)
+            .filter(
+                models.Book.owner_id == current_user.id,
+                models.Book.title.ilike(payload.title.strip()),
+                models.Book.author.ilike(payload.author.strip()),
+            )
+            .first()
+        )
+    if existing:
+        existing.status = payload.status
+        _sync_completed_at(existing, existing.status)
+        if payload.catalog_book_id and not existing.catalog_book_id:
+            existing.catalog_book_id = payload.catalog_book_id
+        if payload.cover and not existing.cover:
+            existing.cover = payload.cover
+        if payload.total_pages and not existing.total_pages:
+            existing.total_pages = payload.total_pages
+        if payload.published_year and not existing.published_year:
+            existing.published_year = payload.published_year
+        db.commit()
+        db.refresh(existing)
+        return existing
+
     book = models.Book(**payload.model_dump(), owner_id=current_user.id)
     _sync_completed_at(book, book.status)
     db.add(book)

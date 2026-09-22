@@ -5,8 +5,9 @@ import { ArrowLeft, Camera, Check, Search, Loader2, X } from "lucide-react";
 import Btn from "../components/common/Btn";
 import type { Book, ReadingStatus } from "../types";
 import { Input, ProgressBar, Select, StarRating } from "./pageHelpers";
+import { searchBooks, CATEGORY_OPTIONS, BookSearchError } from "../services/googleBooksService";
+import type { GoogleBookResult } from "../services/googleBooksService";
 
-const KNOWN_CATEGORIES = ["Fiction", "Non-Fiction", "Technology", "Self-Help", "Psychology", "Memoir", "Design", "Philosophy", "History", "Science"];
 const FALLBACK_COVER = "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=200&h=280&fit=crop&auto=format";
 
 interface AddBookPageProps {
@@ -15,46 +16,6 @@ interface AddBookPageProps {
   onCancel: () => void;
   /** Which status a brand-new book should start as (e.g. "wishlist" when opened from the Wishlist page). Ignored when editing. */
   defaultStatus?: ReadingStatus;
-}
-
-interface SearchResult {
-  id: string;
-  title: string;
-  authors: string[];
-  thumbnail: string;
-  publishedYear: number;
-  pageCount: number;
-  category: string;
-  isbn: string;
-}
-
-function guessCategory(rawCategories: string[]): string {
-  const joined = rawCategories.join(" ").toLowerCase();
-  return KNOWN_CATEGORIES.find((c) => joined.includes(c.toLowerCase())) || "";
-}
-
-async function searchGoogleBooks(query: string): Promise<SearchResult[]> {
-  const res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=8`);
-  if (!res.ok) throw new Error("Search failed");
-  const data = await res.json();
-
-  return (data.items || []).map((item: any) => {
-    const info = item.volumeInfo || {};
-    const identifiers: { type: string; identifier: string }[] = info.industryIdentifiers || [];
-    const isbn = identifiers.find((i) => i.type === "ISBN_13")?.identifier || identifiers[0]?.identifier || "";
-    const thumbnail = (info.imageLinks?.thumbnail || info.imageLinks?.smallThumbnail || "").replace("http://", "https://");
-
-    return {
-      id: item.id,
-      title: info.title || "Untitled",
-      authors: info.authors || [],
-      thumbnail,
-      publishedYear: info.publishedDate ? parseInt(info.publishedDate.slice(0, 4), 10) || 0 : 0,
-      pageCount: info.pageCount || 0,
-      category: guessCategory(info.categories || []),
-      isbn,
-    } as SearchResult;
-  });
 }
 
 export default function AddBookPage({ book, onSave, onCancel, defaultStatus }: AddBookPageProps) {
@@ -78,7 +39,7 @@ export default function AddBookPage({ book, onSave, onCancel, defaultStatus }: A
 
   const [showSearch, setShowSearch] = useState(!isEdit);
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
+  const [results, setResults] = useState<GoogleBookResult[]>([]);
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
 
@@ -95,27 +56,27 @@ export default function AddBookPage({ book, onSave, onCancel, defaultStatus }: A
     setSearching(true);
     setSearchError(null);
     try {
-      const items = await searchGoogleBooks(query.trim());
+      const items = await searchBooks(query.trim());
       setResults(items);
       if (items.length === 0) setSearchError("No results found. Try a different search, or fill the form in manually below.");
-    } catch {
-      setSearchError("Couldn't reach the book search right now. You can still add the book manually below.");
+    } catch (err) {
+      setSearchError(err instanceof BookSearchError ? err.message : "Something went wrong. You can still add the book manually below.");
     } finally {
       setSearching(false);
     }
   }
 
-  function handleSelectResult(r: SearchResult) {
+  function handleSelectResult(r: GoogleBookResult) {
     setForm((p) => ({
       ...p,
       title: r.title,
-      author: r.authors.join(", ") || p.author,
+      author: r.author || p.author,
       isbn: r.isbn || p.isbn,
       publishedYear: r.publishedYear ? String(r.publishedYear) : p.publishedYear,
-      totalPages: r.pageCount ? String(r.pageCount) : p.totalPages,
+      totalPages: r.totalPages ? String(r.totalPages) : p.totalPages,
       category: r.category || p.category,
     }));
-    if (r.thumbnail) setCoverUrl(r.thumbnail);
+    if (r.cover) setCoverUrl(r.cover);
     setResults([]);
     setQuery("");
     setShowSearch(false);
@@ -176,14 +137,14 @@ export default function AddBookPage({ book, onSave, onCancel, defaultStatus }: A
                 <div className="grid sm:grid-cols-2 gap-2 max-h-80 overflow-y-auto pr-1">
                   {results.map((r) => (
                     <button
-                      key={r.id}
+                      key={r.googleBooksId}
                       type="button"
                       onClick={() => handleSelectResult(r)}
                       className="flex gap-3 p-2.5 rounded-xl border border-border bg-background hover:border-primary hover:bg-muted transition-colors text-left"
                     >
                       <div className="w-10 h-14 rounded bg-muted overflow-hidden flex-shrink-0">
-                        {r.thumbnail ? (
-                          <img src={r.thumbnail} alt={r.title} className="w-full h-full object-cover" />
+                        {r.cover ? (
+                          <img src={r.cover} alt={r.title} className="w-full h-full object-cover" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                             <Camera className="w-4 h-4" />
@@ -192,7 +153,7 @@ export default function AddBookPage({ book, onSave, onCancel, defaultStatus }: A
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-foreground line-clamp-2">{r.title}</p>
-                        <p className="text-xs text-muted-foreground truncate mt-0.5">{r.authors.join(", ") || "Unknown author"}</p>
+                        <p className="text-xs text-muted-foreground truncate mt-0.5">{r.author || "Unknown author"}</p>
                         {r.publishedYear > 0 && <p className="text-xs text-muted-foreground mt-0.5">{r.publishedYear}</p>}
                       </div>
                     </button>
@@ -246,7 +207,7 @@ export default function AddBookPage({ book, onSave, onCancel, defaultStatus }: A
             <Input label="Published Year" value={form.publishedYear} onChange={f("publishedYear")} placeholder="2024" type="number" />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <Select label="Category" value={form.category} onChange={f("category")} options={KNOWN_CATEGORIES} required />
+            <Select label="Category" value={form.category} onChange={f("category")} options={CATEGORY_OPTIONS} required />
             <Input label="Genre" value={form.genre} onChange={f("genre")} placeholder="e.g. Literary Fiction" />
           </div>
         </div>

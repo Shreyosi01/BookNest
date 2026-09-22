@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
@@ -6,10 +6,6 @@ from pydantic.alias_generators import to_camel
 
 
 class CamelModel(BaseModel):
-    """Base model that serializes fields as camelCase JSON (e.g. total_pages -> totalPages)
-    while keeping snake_case field names in Python, so this lines up with the frontend's
-    Book type with zero mapping code on either side."""
-
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True, from_attributes=True)
 
 
@@ -42,7 +38,7 @@ class UpdateProfileRequest(CamelModel):
     name: str = Field(min_length=1)
 
 
-# ── Books ─────────────────────────────────────────────────────────────────
+# ── Personal shelf books (Library/Wishlist) ────────────────────────────────
 
 class BookBase(CamelModel):
     title: str
@@ -60,6 +56,7 @@ class BookBase(CamelModel):
     quotes: list[str] = []
     favorite: bool = False
     published_year: int = 0
+    catalog_book_id: Optional[str] = None
 
 
 class BookCreate(BookBase):
@@ -67,8 +64,6 @@ class BookCreate(BookBase):
 
 
 class BookUpdate(CamelModel):
-    """All fields optional — used for partial updates (edit book, toggle favorite, etc.)."""
-
     title: Optional[str] = None
     author: Optional[str] = None
     isbn: Optional[str] = None
@@ -84,9 +79,88 @@ class BookUpdate(CamelModel):
     quotes: Optional[list[str]] = None
     favorite: Optional[bool] = None
     published_year: Optional[int] = None
+    catalog_book_id: Optional[str] = None
 
 
 class BookOut(BookBase):
     id: str
     date_added: date
     completed_at: Optional[date] = None
+
+
+# ── Shared catalog + public reviews ────────────────────────────────────────
+
+class CatalogBookCreate(CamelModel):
+    google_books_id: Optional[str] = None
+    title: str
+    author: str = ""
+    isbn: str = ""
+    category: str = ""
+    genre: str = ""
+    cover: str = ""
+    published_year: int = 0
+    total_pages: int = 0
+    description: str = ""
+    preview_link: str = ""
+    buy_link: str = ""
+
+
+class CatalogBookOut(CamelModel):
+    id: str
+    google_books_id: Optional[str] = None
+    title: str
+    author: str
+    isbn: str
+    category: str
+    genre: str
+    cover: str
+    published_year: int
+    total_pages: int
+    description: str = ""
+    preview_link: str = ""
+    buy_link: str = ""
+    average_rating: float = 0.0
+    review_count: int = 0
+
+
+class ReviewCreate(CamelModel):
+    rating: int = Field(ge=1, le=5)
+    text: str = ""
+
+
+class ReviewOut(CamelModel):
+    id: str
+    rating: int
+    text: str
+    created_at: datetime
+    reviewer_name: str
+    reviewer_id: str
+
+
+# ── AI recommendations ──────────────────────────────────────────────────────
+
+class RecommendationRequest(CamelModel):
+    genre: Optional[str] = None
+    mood: Optional[str] = None
+    query: Optional[str] = None
+
+
+class RecommendationItem(CamelModel):
+    title: str
+    author: str = ""
+    reason: str = ""
+
+
+class RecommendationResponse(CamelModel):
+    recommendations: list[RecommendationItem] = []
+
+
+class BookInsightRequest(CamelModel):
+    title: str
+    author: str = ""
+
+
+class BookInsightResponse(CamelModel):
+    summary: str = ""
+    themes: list[str] = []
+    good_for: str = ""

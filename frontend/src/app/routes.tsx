@@ -50,8 +50,18 @@ export default function AppRoutes() {
       />
       <Route path="/goals" element={<GoalsPage books={mockBooks} />} />
       <Route path="/analytics" element={<AnalyticsPage books={mockBooks} />} />
-      <Route path="/profile" element={<ProfilePage books={mockBooks} />} />
-      <Route path="/settings" element={<SettingsPage />} />
+      <Route
+        path="/profile"
+        element={
+          <ProfilePage
+            books={mockBooks}
+            user={{ id: "1", name: "Reader", email: "reader@example.com", currentStreak: 3 }}
+            onUpdateProfile={async () => true}
+            onLogout={() => {}}
+          />
+        }
+      />
+      <Route path="/settings" element={<SettingsPage isDark={false} onToggleDark={() => {}} />} />
 
       {/* 404 Page */}
       <Route path="*" element={<NotFoundPage />} />
