@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   BookOpen, LayoutDashboard, Target, BarChart3, Sparkles,
-  User, Settings, LogOut, Bookmark, Library,
+  User, Settings, LogOut, Bookmark, Library, Search,
 } from "lucide-react";
 import type { Page } from "../../types";
 import { ConfirmModal } from "../../pages/pageHelpers";
@@ -9,6 +9,7 @@ import { ConfirmModal } from "../../pages/pageHelpers";
 const NAV_ITEMS = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "library", label: "My Library", icon: Library },
+  { id: "discover", label: "Discover Books", icon: Search },
   { id: "wishlist", label: "Wishlist", icon: Bookmark },
   { id: "goals", label: "Reading Goals", icon: Target },
   { id: "analytics", label: "Analytics", icon: BarChart3 },

@@ -24,14 +24,27 @@ export class ApiError extends Error {
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getToken();
 
-  const res = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(options.headers || {}),
-    },
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE_URL}${path}`, {
+      ...options,
+      signal: options.signal ?? AbortSignal.timeout(10000),
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(options.headers || {}),
+      },
+    });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "TimeoutError") {
+      throw new ApiError("The BookNest server took too long to respond. Make sure the backend is running.", 0);
+    }
+
+    throw new ApiError(
+      "Unable to connect to the BookNest server. Start the backend with `uvicorn app.main:app --reload` from the backend folder.",
+      0,
+    );
+  }
 
   // DELETE endpoints return 204 No Content — nothing to parse.
   if (res.status === 204) {

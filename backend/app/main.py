@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import Base, engine
-from app.routers import auth, books
+from app.routers import auth, books, search
 
 # Creates tables on startup if they don't exist yet. Fine for SQLite + a project this size;
 # swap for Alembic migrations later if the schema needs to evolve without losing data.
@@ -21,6 +21,7 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(books.router)
+app.include_router(search.router)
 
 
 @app.get("/health")

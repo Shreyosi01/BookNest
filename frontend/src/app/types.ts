@@ -1,4 +1,4 @@
-export type Page = "dashboard" | "library" | "book-detail" | "add-book" | "edit-book" | "wishlist" | "goals" | "analytics" | "profile" | "settings";
+export type Page = "dashboard" | "library" | "book-detail" | "add-book" | "edit-book" | "wishlist" | "discover" | "goals" | "analytics" | "profile" | "settings";
 export type ReadingStatus = "reading" | "completed" | "paused" | "wishlist" | "not-started";
 export type AuthMode = "signin" | "signup" | "forgot";
 

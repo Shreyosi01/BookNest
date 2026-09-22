@@ -9,6 +9,7 @@ import AuthPage from "./components/auth/AuthPage";
 import DashboardPage from "./pages/DashboardPage";
 import LibraryPage from "./pages/LibraryPage";
 import AddBookPageView from "./pages/AddBookPage";
+import DiscoverBooksPageView from "./pages/DiscoverBooksPage";
 import BookDetailPageView from "./pages/BookDetailPage";
 import WishlistPageView from "./pages/WishlistPage";
 import GoalsPageView from "./pages/GoalsPage";
@@ -237,6 +238,13 @@ export default function App() {
             onCancel={() => navigate(selectedBook ? "book-detail" : "library")}
           />
         ) : null;
+      case "discover":
+        return (
+          <DiscoverBooksPageView
+            onAddBook={handleSaveBook}
+            existingBooks={books}
+          />
+        );
       case "wishlist":
         return (
           <WishlistPageView
